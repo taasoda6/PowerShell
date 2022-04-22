@@ -1,20 +1,21 @@
-﻿$requiredIp=("172.18.0.0/17")
+﻿#Update the target Network Security Groups
+$requiredIp=("172.18.0.0/17")
 $newIP=("172.21.0.0/17")
 
-$ngs=Get-AzNetworkSecurityGroup 
+$ngs=Get-AzNetworkSecurityGroup
 
 foreach($ng in $ngs){
-    $nsgrule=$ng.SecurityRules 
+    $nsgrule=$ng.SecurityRules
 
 foreach( $item in $nsgrule) {
     $ruleip=$item| Select-Object -Property Name,SourceAddressPrefix,Protocol,Access,Direction,DestinationAddressPrefix,SourcePortRange,DestinationPortRange,Priority
-       
+
 foreach( $ip in $ruleip)
     {
         if( $ip.SourceAddressPrefix -eq $requiredIp){
-        
+
         $rec=Get-AzNetworkSecurityGroup -Name $ng.Name
-        
+
         Set-AzNetworkSecurityRuleConfig `
             -Name $ip.Name `
             -NetworkSecurityGroup $rec `
